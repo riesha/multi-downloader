@@ -5,6 +5,9 @@
   import axios from "axios";
   let link = "";
   let valid = false;
+  let processing = false;
+  let output = "";
+  const endpoint = "http://127.0.0.1:3000/api";
 
   function link_isvalid(link, mode) {
     if (link === "") {
@@ -35,15 +38,29 @@
   }
 
   const submitAPI = async () => {
+    processing = true;
     axios
-      .post("/api", {
-        link: link,
-        mode: $mode,
-      })
+      .post(
+        endpoint,
+        {
+          link: link,
+          mode: $mode,
+        },
+        {
+          responseType: "blob",
+        }
+      )
       .then(function (response) {
+        processing = false;
+        var file = window.URL.createObjectURL(response.data);
+
+        output = file;
+        // Or append it whereever you want
+
         console.log(response);
       })
       .catch(function (error) {
+        processing = false;
         console.log(error);
       });
   };
@@ -69,9 +86,15 @@
           class="button"
           value="download"
           disabled={!valid}
-          on:click={submitAPI}
+          on:click|preventDefault={submitAPI}
         />
       </form>
+      {#if processing}
+        <p>processing request...</p>
+      {/if}
+      {#if output != ""}
+        <a href={output} download>Download</a>
+      {/if}
     </div>
   </section>
 </main>
@@ -84,6 +107,11 @@
   :global(body) {
     background-color: black;
     color: aliceblue;
+  }
+  a {
+    text-decoration: none;
+    color: aliceblue;
+    font-family: consolas;
   }
   main {
     display: flex;
