@@ -38,6 +38,7 @@
   }
 
   const submitAPI = async () => {
+    output = "";
     processing = true;
     axios
       .post(
@@ -52,7 +53,7 @@
       )
       .then(function (response) {
         processing = false;
-        var file = window.URL.createObjectURL(response.data);
+        const file = window.URL.createObjectURL(response.data);
 
         output = file;
         // Or append it whereever you want
@@ -84,7 +85,7 @@
         /><input
           type="submit"
           class="button"
-          value="download"
+          value="send"
           disabled={!valid}
           on:click|preventDefault={submitAPI}
         />
