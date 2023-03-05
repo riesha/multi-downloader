@@ -1,18 +1,22 @@
-const CronJob = require("node-cron");
+const cron = require("node-cron");
 const glob = require("glob");
 const fs = require("fs");
-exports.initScheduledJobs = () => {
-  const scheduledJobFunction = CronJob.schedule("*/5 * * * *", async () => {
+
+exports.initjobs = () => {
+  const cleanupjob = cron.schedule("*/5 * * * *", async () => {
     console.log("starting file cleanup...");
-    const files = await glob("downloads/*.*");
+    const files = await glob("downloads/*", {
+      ignore: ["downloads/*.part", ".gitignore"],
+    });
 
     for (const file of files) {
       fs.unlink(file, (err) => {
         if (err) return console.log(err);
+
         console.log(`deleting ${file}...`);
       });
     }
   });
 
-  scheduledJobFunction.start();
+  cleanupjob.start();
 };
