@@ -92,6 +92,9 @@
       </div>
     {/if}
   </section>
+  <footer>
+    <p>made with 💝 by <a href="https://github.com/riesha">riesha</a></p>
+  </footer>
 </main>
 
 <style>
@@ -124,6 +127,13 @@
   header {
     text-align: center;
     margin-bottom: 1rem;
+  }
+  footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
   }
   form {
     display: flex;
