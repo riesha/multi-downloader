@@ -1,6 +1,5 @@
 <script>
   import Dropdown from "./lib/Dropdown.svelte";
-  import { onMount } from "svelte";
   import { mode } from "./store";
   import axios from "axios";
   let link = "";
@@ -19,11 +18,6 @@
           /(?:https?:\/\/)?(?:(?:(?:www\.?)?youtube\.com(?:\/(?:(?:watch\?.*?(v=[^&\s]+).*)|(?:v(\/.*))|(channel\/.+)|(?:user\/(.+))|(?:results\?(search_query=.+))))?)|(?:youtu\.be(\/.*)?))/g
         );
         break;
-      // case "rd":
-      //   return link.match(
-      //     /(https?:\/\/(?:www.)?soundcloud.com\/[\w-]+\/?(?:sets\/)?[\w-]+)/
-      //   );
-      //   break;
       case "tw":
         return link.match(
           /(https?:\/\/(?:www.)?twitter\.com\/.*\/status(?:es)?\/([^\/\?\D]+))/
@@ -54,10 +48,7 @@
       .then(function (response) {
         processing = false;
         const file = window.URL.createObjectURL(response.data);
-
         output = file;
-        // Or append it whereever you want
-
         console.log(response);
       })
       .catch(function (error) {
@@ -90,13 +81,16 @@
           on:click|preventDefault={submitAPI}
         />
       </form>
-      {#if processing}
-        <p>processing request...</p>
-      {/if}
-      {#if output != ""}
-        <a href={output} download>Download</a>
-      {/if}
     </div>
+    {#if processing}
+      <p>processing request...</p>
+    {/if}
+    {#if output != ""}
+      <div class="download">
+        <a href={output} download>Download</a>
+        <i class="fa-solid fa-arrow-down" />
+      </div>
+    {/if}
   </section>
 </main>
 
@@ -113,6 +107,9 @@
     text-decoration: none;
     color: aliceblue;
     font-family: consolas;
+  }
+  a:hover {
+    text-decoration: underline;
   }
   main {
     display: flex;
@@ -134,6 +131,9 @@
     align-items: center;
     justify-content: center;
     gap: 1rem;
+  }
+  section {
+    text-align: center;
   }
   .text {
     width: 50rem;

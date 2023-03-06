@@ -4,13 +4,21 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
 const jobs = require("./jobs");
+const ratelimit = require("express-rate-limit");
 
 const port = 3000;
+const limiter = ratelimit({
+  windowMs: 1 * 60 * 1000,
+  max: 2,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 const YTDlpWrap = require("yt-dlp-wrap").default;
 const ytDlpWrap = new YTDlpWrap("dlp.exe");
 
 app.use(cors());
+app.use("/api", limiter);
 app.use(bodyParser.json());
 app.use(express.static("public"));
 app.use(express.static(__dirname + "/downloads"));
@@ -25,11 +33,11 @@ app.post("/api", async (req, res) => {
   let data = req.body;
 
   if (!data.link || !data.mode) {
+    console.log("Invalid request, missing link or mode");
     res.status(500).send("Invalid request, missing link or mode");
     return;
   }
 
-  // TODO: handle soundcloud and twitter links (probably extract the handler func and make soundcloud download mp3)
   let result = await ytDlpWrap.execPromise([
     data.link,
     "-f",
@@ -38,9 +46,10 @@ app.post("/api", async (req, res) => {
     `/downloads/${fileName}`,
   ]);
 
+  console.log(`Downloaded ${fileName}`);
   res.download(fileName, options);
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`listening on port ${port}`);
 });

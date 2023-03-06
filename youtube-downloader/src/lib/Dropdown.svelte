@@ -3,7 +3,6 @@
   import { mode } from "../store";
   const modes = [
     { site: "youtube", mode: "yt" },
-    // { site: "reddit", mode: "rd" },
     { site: "twitter", mode: "tw" },
     { site: "soundcloud", mode: "sc" },
   ];
